@@ -1,0 +1,19 @@
+Strategy,Query,Expected Source,Retrieval Hit,Latency (s),BLEU,ROUGE-L,Generated Answer
+Zero-shot,What is the vision of the university?,1. Annual Report 2023-24.pdf (p4),No,1.94,0.0,0.0,"<SYS>  I apologize, but I cannot find the vision of the university in the provided context. The text..."
+Few-shot,What is the vision of the university?,1. Annual Report 2023-24.pdf (p4),No,3.18,0.0,0.0606,"Based on the provided context, I can help you find the answer to your question about the vision of t..."
+Chain-of-Thought,What is the vision of the university?,1. Annual Report 2023-24.pdf (p4),No,4.05,0.0,0.0638,Step 1: Use the OCR technology to extract text from the PDF files provided.   Step 2: Search for key...
+Zero-shot,Who was the chief guest at the 76th Convocation?,1. Annual Report 2023-24.pdf (p20),Yes,1.0,0.0,0.2222,"According to the PDF document provided, the Chief Guest at the 76th Convocation was not specified...."
+Few-shot,Who was the chief guest at the 76th Convocation?,1. Annual Report 2023-24.pdf (p20),Yes,1.0,0.0,0.2308,The answer is that the Chief Guest at the 76th Convocation was Dr. John Doe....
+Chain-of-Thought,Who was the chief guest at the 76th Convocation?,1. Annual Report 2023-24.pdf (p20),Yes,4.37,0.0,0.0727,"Based on the given context, we can identify the following steps to answer the question:  1. Look for..."
+Zero-shot,Which team won the Huawei ICT Innovation Global Competition 2022-23?,1. Annual Report 2023-24.pdf (p26),Yes,1.7,0.0,0.0833,I can't find any information in the provided context about which team won the Huawei ICT Innovation ...
+Few-shot,Which team won the Huawei ICT Innovation Global Competition 2022-23?,1. Annual Report 2023-24.pdf (p26),Yes,1.52,0.0,0.0571,"Based on page 26 of the annual report 2023-24, Huawei ICT Innovation Global Competition 2022-23 winn..."
+Chain-of-Thought,Which team won the Huawei ICT Innovation Global Competition 2022-23?,1. Annual Report 2023-24.pdf (p26),Yes,9.89,0.0,0.0402,"1. First, we need to identify the relevant information from the annual reports.  2. From the 2023-24..."
+Zero-shot,Describe the location of the Chiniot-Faisalabad Campus.,1. Annual Report 2023-24.pdf (p6),Yes,2.48,0.0,0.1739,"The Chiniot-Faisalabad Campus is located in the city of Faisalabad, Pakistan. It is the campus of a ..."
+Few-shot,Describe the location of the Chiniot-Faisalabad Campus.,1. Annual Report 2023-24.pdf (p6),Yes,0.94,0.0,0.2581,"The Chiniot-Faisalabad Campus is located in the city of Chiniot, Pakistan...."
+Chain-of-Thought,Describe the location of the Chiniot-Faisalabad Campus.,1. Annual Report 2023-24.pdf (p6),Yes,2.91,0.0,0.1481,"Step 1: I will first look at the information provided in the annual report. According to the report,..."
+Zero-shot,What are the grading criteria for the Final Year Project?,3. FYP-Handbook-2023.pdf (p10),No,1.42,0.0,0.1818,"Based on the provided context, there is no information available about the grading criteria for the ..."
+Few-shot,What are the grading criteria for the Final Year Project?,3. FYP-Handbook-2023.pdf (p10),No,11.4,0.0,0.0448,"According to the FYP-Handbook-2023, PDF page 11, Type: ocr, the grading criteria for the Final Year ..."
+Chain-of-Thought,What are the grading criteria for the Final Year Project?,3. FYP-Handbook-2023.pdf (p10),No,7.72,0.0,0.0562,"Given that you are a helpful RAG assistant, I will provide an answer to the question based on the in..."
+Zero-shot,What is the recipe for chocolate cake?,None,Yes,8.61,0.0,0.0127,"""Recipe for Chocolate Cake""  Ingredients: - 2 cups all-purpose flour - 2 cups granulated sugar - Â¾ ..."
+Few-shot,What is the recipe for chocolate cake?,None,Yes,1.31,0.0,0.1053,There is no recipe for chocolate cake in the given PDF file. The context discusses research problems...
+Chain-of-Thought,What is the recipe for chocolate cake?,None,Yes,3.63,0.0,0.0659,1. Understand the question: The user wants to know the recipe for chocolate cake. 2. Look up the top...

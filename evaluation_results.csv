@@ -1,0 +1,25 @@
+Query,Generated Answer,Reference Answer,Latency (s),BLEU,ROUGE-1,ROUGE-L,Context
+What is the financial performance summary for 2024?,"Based on the information provided in the context, it appears that the financial year 2023-2024 has ended. Therefore, it would not be possible to determine the financial performance summary for 2024 specifically. The annual reports for the years 2022-2023 and 2023-2024 have been provided in the context, but they do not contain information on the financial performance summary for 2024.
+
+The provided documents do not contain this information.",The company reported strong financial performance in 2024 with increased revenue and stable profit margins compared to the previous fiscal year.,1.9569,0.0,0.2174,0.1304,"[PDF: 1. Annual Report 2023-24.pdf, Page: 60, Type: ocr]
+Financial Year 2023-2024
+
+[PDF: 1. Annual Report 2023-24.pdf, Page: 61, Type: ocr]
+2023-2024,
+
+[PDF: 1. Annual Report 2023-24.pdf, Page: 31, Ty..."
+What are the guidelines for the Final Year Project (FYP)?,The provided documents do not contain the information about the guidelines for the Final Year Project (FYP).,"The FYP guidelines outline the requirements for project proposals, supervision, submission deadlines, and grading criteria for final year students.",0.4471,0.0,0.4444,0.2778,"[PDF: 3. FYP-Handbook-2023.pdf, Page: 5, Type: ocr]
+The Final Year Project (FYP) provides an excellent opportunity
+
+[PDF: 3. FYP-Handbook-2023.pdf, Page: 16, Type: ocr]
+The Final Year Project (FYP) is..."
+Who are the key management personnel mentioned in the annual report?,"In order to determine who the key management personnel are mentioned in the annual report, I will need to analyze the content of the document. However, without access to the specific PDF file referenced in the prompt, it is impossible for me to extract this information. 
+
+Therefore, my response will be: ""The provided documents do not contain this information.""",The annual report lists the Board of Directors and the Executive Management team as the key personnel responsible for the company's strategic direction.,1.1687,0.0,0.3133,0.2169,"[PDF: 2. financials.pdf, Page: 32, Type: ocr]
+The annual report contains a significant amount of information:
+
+[PDF: 2. financials.pdf, Page: 33, Type: ocr]
+Contents of an annual report
+
+[PDF: 2. fina..."
+AVERAGE,-,-,1.1909,0.0,0.32503333333333334,0.20836666666666667,-
