@@ -1,130 +1,181 @@
 # Multimodal RAG Chatbot (PDFs + Images)
 
-## Overview
+<div align="center">
 
-This project is a **Multimodal Retrieval-Augmented Generation (RAG) Chatbot** designed to answer questions based on the content of PDF documents and images. It leverages a local Large Language Model (LLM) via **Ollama** and uses **ChromaDB** for efficient vector retrieval.
+[![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Framework](https://img.shields.io/badge/Framework-Streamlit-FF4B4B.svg)](https://streamlit.io/)
+[![Database](https://img.shields.io/badge/VectorDB-ChromaDB-orange.svg)](https://www.trychroma.com/)
+[![Models](https://img.shields.io/badge/Models-Ollama%20%2F%20CLIP%20ViT--B--32-green.svg)](https://ollama.com/)
+
+</div>
+
+---
+
+### 📋 Assignment Information
+- **Course:** AI-4009 Generative AI
+- **Posted Date:** Nov 17, 2025
+- **Due Date:** Nov 25, 2025
+- **Repository:** [https://github.com/i220893/multimodal-rag-chatbot](https://github.com/i220893/multimodal-rag-chatbot)
+
+---
+
+## 🔍 Overview
+
+This project is a **Multimodal Retrieval-Augmented Generation (RAG) Chatbot** designed to answer complex questions based on the content of PDF documents and embedded images. It leverages a local Large Language Model (LLM) via **Ollama** and uses **ChromaDB** for efficient multimodal vector retrieval.
 
 The system supports:
-- **Text Retrieval**: Search within PDF content.
-- **Visual Search**: Upload an image to find relevant context.
-- **Advanced Prompting**: Choose between **Zero-shot**, **Few-shot**, and **Chain-of-Thought** prompting strategies.
+- **Text Retrieval**: Deep search within PDF document content.
+- **Visual Search**: Search using query images to find matching visual and textual contexts.
+- **Advanced Prompting**: Dynamically configure prompting strategies between **Zero-shot**, **Few-shot**, and **Chain-of-Thought (CoT)**.
 
-## Features
+---
 
-- 📄 **PDF Processing**: Extracts text and metadata from PDFs.
-- 🖼️ **Image Support**: Handles image queries and retrieval.
-- 🧠 **Local LLM**: Uses **Ollama** (default model: `mistral:7b-instruct-q4_K_M`) for privacy and local execution.
-- 🗄️ **Vector Database**: **ChromaDB** stores embeddings for fast similarity search.
-- 🖥️ **Interactive UI**: Built with **Streamlit** for an easy-to-use interface.
+## 🛠️ System Architecture
 
-## Project Structure
+The following diagram illustrates the end-to-end data ingestion, embedding storage, retrieval, and generation pipeline:
+
+```mermaid
+graph TD
+    %% Ingestion
+    subgraph Ingestion ["1. Data Ingestion & Preprocessing"]
+        PDF[PDF Documents] --> PM[PyMuPDF: Text Extraction]
+        PDF --> P2I[pdf2image: Page Conversion]
+        P2I --> OCR[EasyOCR: Chart/Image OCR]
+    end
+
+    %% Embedding
+    subgraph Storage ["2. Embedding & Vector Storage"]
+        PM --> Chunk[Text Chunking <br/> 600-char sliding window]
+        OCR --> ImgChunk[Image Chunks]
+        Chunk --> CLIP[CLIP ViT-B-32 Encoder]
+        ImgChunk --> CLIP
+        CLIP --> Chroma[(ChromaDB Vector Store)]
+    end
+
+    %% Query & Retrieval
+    subgraph Retrieval ["3. Multimodal Retrieval"]
+        UserQuery["User Query <br/> (Text or Image)"] --> QueryClip[CLIP Encoder]
+        QueryClip --> Cosine[Cosine Similarity Search]
+        Chroma --> Cosine
+        Cosine --> Context[Top-K Context Chunks]
+    end
+
+    %% Generation
+    subgraph Generation ["4. Generation (RAG)"]
+        Context --> PromptEng["Prompt Strategies <br/> (Zero-shot / Few-shot / CoT)"]
+        PromptEng --> Ollama[Local Ollama <br/> Mistral-7B-Instruct]
+        Ollama --> Output[Final Generated Answer]
+    end
+```
+
+---
+
+## 📂 Project Structure
 
 ```
 ├── src/
-│   ├── rag/                # RAG pipeline and prompt templates
-│   ├── retrieval/          # Retrieval logic and ChromaDB interaction
-│   ├── llm/                # LLM client (Ollama wrapper)
-│   ├── embeddings/         # Embedding generation logic
-│   ├── pdf_processing/     # PDF parsing and OCR
-│   ├── chunking/           # Text chunking strategies
-│   ├── evaluation/         # Evaluation metrics
-│   └── ...
-├── chroma_db/              # Persistent storage for ChromaDB
-├── data/                   # Directory for input data (PDFs)
-├── notebooks/              # Jupyter notebooks for experiments
-├── streamlit_app.py        # Main Streamlit application entry point
-├── requirements.txt        # Python dependencies
+│   ├── chunking/           # Text chunking strategies & sliding windows
+│   ├── embeddings/         # CLIP embedding generation logic (text/image)
+│   ├── evaluation/         # Retrieval hit rate, latency & generation metrics
+│   ├── llm/                # Local LLM integration (Ollama wrapper)
+│   ├── pdf_processing/     # PyMuPDF parser, pdf2image & EasyOCR pipelines
+│   ├── rag/                # RAG pipeline manager & prompt templates
+│   ├── retrieval/          # ChromaDB interaction & similarity search
+│   ├── utils/              # General helper utilities
+│   ├── vector_store/       # Scripts to build & persist index
+│   └── visualizations/     # TSNE & PCA embedding visualization tools
+├── chroma_db/              # Local persistent ChromaDB vector store
+├── data/                   # Input PDFs / Document directory
+├── notebooks/              # Jupyter notebooks for interactive experiments
+├── report_plots/           # Evaluation metrics visualization charts
+├── streamlit_app.py        # Streamlit web application interface
+├── requirements.txt        # Project dependencies list
 └── README.md               # Project documentation
 ```
 
-## Setup & Installation
+---
+
+## 🚀 Setup & Installation
 
 ### Prerequisites
 
-1.  **Python 3.8+** installed.
-2.  **Ollama** installed and running.
-    - Download from [ollama.com](https://ollama.com/).
-    - Pull the required model:
-      ```bash
-      ollama pull mistral:7b-instruct-q4_K_M
-      ```
-      *(Note: You can change the model in `src/llm/llm_client.py` if needed)*
+1. **Python 3.8+** installed.
+2. **Ollama** installed and running:
+   - Download it from [ollama.com](https://ollama.com/).
+   - Pull the default model used by the RAG client:
+     ```bash
+     ollama pull mistral:7b-instruct-q4_K_M
+     ```
+     *(Note: You can configure the model string in `src/llm/llm_client.py` if you wish to use a different model).*
 
-### Installation
+### Installation Steps
 
-1.  Clone the repository:
-    ```bash
-    git clone <repository-url>
-    cd <repository-directory>
-    ```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/i220893/multimodal-rag-chatbot.git
+   cd multimodal-rag-chatbot
+   ```
 
-2.  Install dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
+2. Install python dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Usage
+---
 
-1.  **Start the Application**:
-    Run the Streamlit app:
-    ```bash
-    streamlit run streamlit_app.py
-    ```
+## 💻 Usage
 
-2.  **Interact with the Chatbot**:
-    - Open your browser (usually at `http://localhost:8501`).
-    - **Select Prompting Strategy**: Choose from Zero-shot, Few-shot, or Chain-of-Thought.
-    - **Ask a Question**: Type your query in the text box.
-    - **Upload an Image**: (Optional) Upload an image to search for visually similar content.
-    - Click **"Run RAG Query"** to get an answer based on the retrieved context.
+1. **Start the Application**:
+   Run the Streamlit server:
+   ```bash
+   streamlit run streamlit_app.py
+   ```
 
-## System Workflow
+2. **Interact with the Chatbot**:
+   - Open the web interface in your browser (typically at `http://localhost:8501`).
+   - **Configure Prompting Strategy**: Toggle between **Zero-shot**, **Few-shot**, or **Chain-of-Thought** in the sidebar.
+   - **Submit Query**: Type your question in the text box.
+   - **Upload Query Image**: (Optional) Upload an image to find visually relevant context.
+   - Click **"Run RAG Query"** to trigger retrieval and LLM generation.
 
-The system follows a structured pipeline from raw data to final answer generation:
+---
 
-### 1. Data Preprocessing & Ingestion
-- **PDF Parsing**: `PyMuPDF` extracts raw text and metadata (page numbers) from PDF documents.
-- **Image Extraction**: `pdf2image` converts PDF pages into images, and `EasyOCR` extracts text from charts and figures to make visual data searchable.
-- **Chunking**:
-    - **Text**: Split into 600-character chunks with a sliding window to preserve context.
-    - **Images**: Treated as standalone chunks.
+## 📊 Pipeline & Workflow Detail
 
-### 2. Embedding & Vector Storage
-- **Multimodal Embedding**: We use **CLIP (ViT-B-32)** to generate 512-dimensional embeddings for both text and image chunks. This allows cross-modal retrieval (text-to-image search).
-- **Vector Database**: Embeddings are stored in **ChromaDB**, indexed for fast similarity search.
+### 1. Ingestion & Preprocessing
+* **Text Extraction:** Raw text is extracted using `PyMuPDF`.
+* **OCR Parsing:** `pdf2image` converts PDF pages into image format, enabling `EasyOCR` to read text embedded in charts, diagrams, and figures.
+* **Chunking:** Text chunks are created using a 600-character window with custom sliding boundaries to preserve context across chunks.
 
-### 3. Retrieval
-- **Query Embedding**: The user's question (text or image) is embedded using the same CLIP model.
-- **Similarity Search**: ChromaDB retrieves the top-k (default k=5) most similar chunks based on cosine similarity.
+### 2. Multi-Modal Embeddings
+* Both text chunks and visual page context are embedded into a single shared vector space using the **CLIP (ViT-B-32)** model.
+* This mapping enables cross-modal similarity lookups (e.g., retrieving text relevant to a visual cue, or vice versa).
 
-### 4. Generation (RAG)
-- **Prompt Engineering**: The retrieved context is injected into a prompt template. The system supports:
-    - **Zero-shot**: Direct answering.
-    - **Few-shot**: Uses examples to guide style.
-    - **Chain-of-Thought**: Encourages step-by-step reasoning.
-- **LLM Inference**: The prompt is sent to a local **Mistral-7B** model via **Ollama** to generate the final answer.
+### 3. Similarity Search & Prompting
+* ChromaDB acts as the local storage and retrieves the top-K context chunks.
+* Staged prompt templates:
+  - **Zero-shot**: Directly provides the context and query.
+  - **Few-shot**: Includes structured examples of queries and expected answers to guide output.
+  - **Chain-of-Thought (CoT)**: Instructs the LLM to think step-by-step and write down reasoning before forming the final response.
 
-### 5. Evaluation
-- **Metrics**: We evaluate the system using:
-    - **Retrieval Hit Rate**: Accuracy of finding the correct source page.
-    - **ROUGE/BLEU**: Semantic overlap with ground truth answers.
-    - **Latency**: Time taken for end-to-end generation.
-- **Results**: See `report_plots/` for detailed performance graphs.
+---
 
-## Key Components
+## 📈 Evaluation & Results
 
--   **`streamlit_app.py`**: The frontend interface. Handles user input, calls the retrieval system, and displays results.
--   **`src/rag/rag_generator.py`**: Orchestrates the RAG process (Retrieval -> Context Building -> Generation).
--   **`src/retrieval/retriever.py`**: Manages interactions with ChromaDB for text and image search.
--   **`src/llm/llm_client.py`**: Wrapper for calling the local Ollama instance.
+Evaluation scripts (`tests/evaluate_rag_pipeline.py`) measure performance across:
+* **Retrieval Hit Rate**: Success rate of matching query to relevant reference page.
+* **Text Quality (ROUGE / BLEU)**: Semantic overlap of response against ground truth references.
+* **Performance Latency**: Response generation time differences across Zero-shot, Few-shot, and Chain-of-Thought prompting.
 
-## Dependencies
+Refer to the visual plots stored under [report_plots/](file:///c:/MyProperty/UNI/GenAI/Assignment-3/report_plots) for comprehensive benchmarks.
 
-Key libraries used:
--   `streamlit`: Web interface.
--   `chromadb`: Vector database.
--   `sentence-transformers`: Embeddings.
--   `pymupdf`, `pdf2image`, `easyocr`: PDF and image processing.
--   `langchain`: Framework utilities.
+---
 
-See `requirements.txt` for the full list.
+## 📦 Dependencies
+
+Main libraries powering this system:
+* `streamlit` — Interactive Web application UI.
+* `chromadb` — Embedded vector database.
+* `sentence-transformers` — CLIP embedding calculations.
+* `easyocr`, `pdf2image`, `pymupdf` — OCR and document ingestion.
+* `langchain` — Core pipeline orchestration utility helpers.
